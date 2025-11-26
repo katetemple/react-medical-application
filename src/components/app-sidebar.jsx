@@ -1,6 +1,6 @@
 import * as React from "react";
 import {
-  IconConfetti,
+  IconStethoscope,
   IconTheater,
   IconDashboard,
   IconMicrophone2,
@@ -37,9 +37,9 @@ const data = {
       icon: IconDashboard,
     },
     {
-      title: "Festivals",
-      url: "/festivals",
-      icon: IconConfetti,
+      title: "Doctors",
+      url: "/doctors",
+      icon: IconStethoscope,
     },
     {
       title: "Stages",

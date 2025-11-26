@@ -7,11 +7,11 @@ import { useAuth } from "@/hooks/useAuth";
 
 export default function Create() {
     const [form, setForm] = useState({
-        title: "",
-        description: "",
-        city: "",
-        start_date: "",
-        end_date: ""
+        first_name: "",
+        last_name: "",
+        specialisation: "",
+        email: "",
+        phone: ""
     });
     const navigate = useNavigate();
     const { token } = useAuth();
@@ -23,11 +23,11 @@ export default function Create() {
         });
     };
 
-    const createFestival = async () => {
+    const createDoctor = async () => {
 
         const options = {
             method: "POST",
-            url: `/festivals`,
+            url: `/doctors`,
             headers: {
                 Authorization: `Bearer ${token}`
             },
@@ -37,9 +37,9 @@ export default function Create() {
         try {
             let response = await axios.request(options);
             console.log(response.data);
-            navigate('/festivals', { state: { 
+            navigate('/doctors', { state: { 
                 type: 'success',
-                message: `Festival "${response.data.title}" created successfully` 
+                message: `Doctor "${response.data.first_name} ${response.data.last_name}" created successfully` 
             }});
         } catch (err) {
             console.log(err);
@@ -50,52 +50,57 @@ export default function Create() {
     const handleSubmit = (e) => {
         e.preventDefault();
         console.log(form);
-        createFestival();
+        createDoctor();
     };
 
   return (
     <>
-        <h1>Create a new Festival</h1>
+        <h1>Create a new Doctor</h1>
         <form onSubmit={handleSubmit}>
             <Input 
                 type="text" 
-                placeholder="Title" 
-                name="title" 
-                value={form.title} 
+                placeholder="First Name" 
+                name="first_name" 
+                value={form.first_name} 
                 onChange={handleChange} 
             />
             <Input 
                 className="mt-2"
                 type="text" 
-                placeholder="Description" 
-                name="description" 
-                value={form.description} 
+                placeholder="Last Name" 
+                name="last_name" 
+                value={form.last_name} 
                 onChange={handleChange} 
             />
             <Input 
                 className="mt-2"
                 type="text" 
-                placeholder="City" 
-                name="city" 
-                value={form.city} 
+                placeholder="Email" 
+                name="email" 
+                value={form.email} 
                 onChange={handleChange} 
             />
             <Input 
                 className="mt-2"
                 type="text" 
-                placeholder="Start Date" 
-                name="start_date" 
-                value={form.start_date} 
+                placeholder="Phone" 
+                name="phone" 
+                value={form.phone} 
                 onChange={handleChange} 
             />
-            <Input 
-                className="mt-2"
-                type="text" 
-                placeholder="End Date" 
-                name="end_date" 
-                value={form.end_date} 
-                onChange={handleChange} 
-            />
+            <select
+                name="specialisation"
+                value={form.specialisation}
+                onChange={handleChange}
+                className="mt-2 border rounded-md p-2 w-full"
+            >
+                <option value="" disabled hidden className="text-gray-400">Specialisation</option>
+                <option value="Podiatrist">Podiatrist</option>
+                <option value="Dermatologist">Dermatologist</option>
+                <option value="Pediatrician">Pediatrician</option>
+                <option value="Psychiatrist">Psychiatrist</option>
+                <option value="General Practitioner">General Practitioner</option>
+            </select>
             <Button 
                 className="mt-4 cursor-pointer" 
                 variant="outline" 

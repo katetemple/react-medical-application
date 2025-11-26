@@ -18,10 +18,10 @@ export default function Edit() {
   const { token } = useAuth();
 
   useEffect(() => {
-    const fetchFestival = async () => {
+    const fetchDoctor = async () => {
       const options = {
         method: "GET",
-        url: `/festivals/${id}`,
+        url: `/doctors/${id}`,
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -30,20 +30,20 @@ export default function Edit() {
       try {
         let response = await axios.request(options);
         console.log(response.data);
-        let festival = response.data;
+        let doctor = response.data;
         setForm({
-            title: festival.title,
-            description: festival.description,
-            city: festival.city,
-            start_date: festival.start_date,
-            end_date: festival.end_date,
+            first_name: doctor.first_name,
+            last_name: doctor.last_name,
+            email: doctor.email,
+            phone: doctor.phone.replace(/\s+/g, ""),
+            specialisation: doctor.specialisation,
         });
       } catch (err) {
         console.log(err);
       }
     };
 
-    fetchFestival();
+    fetchDoctor();
   }, []);
 
   const navigate = useNavigate();
@@ -56,12 +56,11 @@ export default function Edit() {
     });
   };
 
-  const updateFestival = async () => {
-    
+  const updateDoctor = async () => {
 
     const options = {
       method: "PATCH",
-      url: `/festivals/${id}`,
+      url: `/doctors/${id}`,
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -71,7 +70,7 @@ export default function Edit() {
     try {
       let response = await axios.request(options);
       console.log(response.data);
-      navigate("/festivals");
+      navigate("/doctors");
     } catch (err) {
       console.log(err);
     }
@@ -80,52 +79,57 @@ export default function Edit() {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log(form);
-    updateFestival();
+    updateDoctor();
   };
 
   return (
     <>
-      <h1>Update Festival</h1>
+      <h1>Update Doctor</h1>
       <form onSubmit={handleSubmit}>
         <Input
           type="text"
-          placeholder="Title"
-          name="title"
-          value={form.title}
+          placeholder="First Name"
+          name="first_name"
+          value={form.first_name}
           onChange={handleChange}
         />
         <Input
           className="mt-2"
           type="text"
-          placeholder="Description"
-          name="description"
-          value={form.description}
+          placeholder="Last Name"
+          name="last_name"
+          value={form.last_name}
           onChange={handleChange}
         />
         <Input
           className="mt-2"
           type="text"
-          placeholder="City"
-          name="city"
-          value={form.city}
+          placeholder="Email"
+          name="email"
+          value={form.email}
           onChange={handleChange}
         />
         <Input
           className="mt-2"
           type="text"
-          placeholder="Start Date"
-          name="start_date"
-          value={form.start_date}
+          placeholder="Phone"
+          name="phone"
+          value={form.phone}
           onChange={handleChange}
         />
-        <Input
-          className="mt-2"
-          type="text"
-          placeholder="End Date"
-          name="end_date"
-          value={form.end_date}
-          onChange={handleChange}
-        />
+         <select
+                name="specialisation"
+                value={form.specialisation}
+                onChange={handleChange}
+                className="mt-2 border rounded-md p-2 w-full"
+            >
+                <option value="" disabled hidden className="text-gray-400">Specialisation</option>
+                <option value="Podiatrist">Podiatrist</option>
+                <option value="Dermatologist">Dermatologist</option>
+                <option value="Pediatrician">Pediatrician</option>
+                <option value="Psychiatrist">Psychiatrist</option>
+                <option value="General Practitioner">General Practitioner</option>
+            </select>
         <Button className="mt-4 cursor-pointer" variant="outline" type="submit">
           Submit
         </Button>
