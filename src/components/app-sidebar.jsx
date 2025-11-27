@@ -42,8 +42,8 @@ const data = {
       icon: IconStethoscope,
     },
     {
-      title: "Stages",
-      url: "#",
+      title: "Patients",
+      url: "/patients",
       icon: IconTheater,
     },
     {

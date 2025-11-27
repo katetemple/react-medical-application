@@ -8,11 +8,11 @@ import { useAuth } from "@/hooks/useAuth";
 
 export default function Edit() {
   const [form, setForm] = useState({
-    title: "",
-    description: "",
-    city: "",
-    start_date: "",
-    end_date: "",
+    first_name: "",
+    last_name: "",
+    email: "",
+    phone: "",
+    specialisation: "",
   });
 
   const { token } = useAuth();

@@ -1,4 +1,4 @@
-import { useState, useEffect} from 'react';
+// import { useState, useEffect} from 'react';
 import { AuthProvider } from './hooks/useAuth';
 
 import { BrowserRouter as Router, Routes, Route } from "react-router";
@@ -14,6 +14,11 @@ import DoctorsIndex from '@/pages/doctors/Index';
 import DoctorsShow from '@/pages/doctors/Show';
 import DoctorsCreate from '@/pages/doctors/Create';
 import DoctorsEdit from '@/pages/doctors/Edit';
+
+import PatientsIndex from '@/pages/patients/Index';
+import PatientsShow from '@/pages/patients/Show';
+import PatientsCreate from '@/pages/patients/Create';
+import PatientsEdit from '@/pages/patients/Edit';
 
 
 export default function App() {
@@ -37,21 +42,19 @@ export default function App() {
               <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6 mx-6">
                 {/* Main content */}
                 <Routes>
-                  <Route
-                    path="/"
-                    element={<Home />}
-                  />
+                  <Route path="/" element={<Home />} />
 
+                  {/* Doctors */}
                   <Route path="/doctors" element={<DoctorsIndex />} />
-                  <Route
-                    path="/doctors/:id"
-                    element={<DoctorsShow />}
-                  />
-                  <Route
-                    path="/doctors/:id/edit"
-                    element={<DoctorsEdit />}
-                  />
+                  <Route path="/doctors/:id" element={<DoctorsShow />} />
+                  <Route path="/doctors/:id/edit" element={<DoctorsEdit />} />
                   <Route path="/doctors/create" element={<DoctorsCreate />} />
+
+                  {/* Patients */}
+                  <Route path="/patients" element={<PatientsIndex />} />
+                  <Route path="/patients/:id" element={<PatientsShow />} />
+                  <Route path="/patients/:id/edit" element={<PatientsEdit />} />
+                  <Route path="/patients/create" element={<PatientsCreate />} />
                 </Routes>
               </div>
             </div>
