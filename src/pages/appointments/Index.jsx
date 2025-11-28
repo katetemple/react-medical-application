@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
 import { Eye, Pencil } from "lucide-react";
 import DeleteBtn from "@/components/DeleteBtn";
+import { useAuth } from "@/hooks/useAuth";
 
 import {
   Table,
@@ -30,13 +31,16 @@ export default function Index() {
   const [appointments, setAppointments] = useState([]);
 
   const navigate = useNavigate();
+  const { token } = useAuth();
   
-
   useEffect(() => {
     const fetchAppointments = async () => {
       const options = {
         method: "GET",
         url: "/appointments",
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
       };
 
       try {
