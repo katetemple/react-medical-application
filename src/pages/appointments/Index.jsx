@@ -29,6 +29,8 @@ import { toast } from "sonner";
 
 export default function Index() {
   const [appointments, setAppointments] = useState([]);
+  const [doctors, setDoctors] = useState([]);
+  const [patients, setPatients] = useState([]);
 
   const navigate = useNavigate();
   const { token } = useAuth();
@@ -53,6 +55,44 @@ export default function Index() {
     };
 
     fetchAppointments();
+  }, []);
+
+  useEffect(() => {
+    const fetchDoctors = async () => {
+      const options = {
+        method: "GET",
+        url: "/doctors",
+      };
+
+      try {
+        let response = await axios.request(options);
+        console.log(response.data);
+        setDoctors(response.data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    fetchDoctors();
+  }, []);
+
+  useEffect(() => {
+    const fetchPatients = async () => {
+      const options = {
+        method: "GET",
+        url: "/patients",
+      };
+
+      try {
+        let response = await axios.request(options);
+        console.log(response.data);
+        setPatients(response.data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    fetchPatients();
   }, []);
 
   const onDeleteCallback = (id) => {
@@ -83,31 +123,39 @@ export default function Index() {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {appointments.map((appointment) => (
-          <TableRow key={appointment.id}>
-            <TableCell>{appointment.appointment_date}</TableCell>
-            <TableCell>{appointment.patient_id}</TableCell>
-            <TableCell>{appointment.doctor_id}</TableCell>
-            <TableCell>
-              <div className="flex gap-2">
-              <Button 
-                className="cursor-pointer hover:border-blue-500"
-                variant="outline"
-                size="icon"
-                onClick={() => navigate(`/appointments/${appointment.id}`)}
-              ><Eye /></Button>
-              <Button 
-                className="cursor-pointer hover:border-blue-500"
-                variant="outline"
-                size="icon"
-                onClick={() => navigate(`/appointments/${appointment.id}/edit`)}
-              ><Pencil /></Button>
-              <DeleteBtn onDeleteCallback={onDeleteCallback} resource="appointments" id={appointment.id} />
-              </div>
+        {
+          appointments.map((appointment) => {
 
-            </TableCell>
-          </TableRow>
-        ))}
+            const doctor = doctors.find(doctor => appointment.doctor_id === doctor.id);
+            const patient = patients.find(patient => appointment.patient_id === patient.id);
+          
+            return (
+              <TableRow key={appointment.id}>
+                <TableCell>{appointment.appointment_date}</TableCell>
+                <TableCell>{patient.first_name} {patient.last_name}</TableCell>
+                <TableCell>{doctor.first_name} {doctor.last_name}</TableCell>
+                <TableCell>
+                  <div className="flex gap-2">
+                  <Button 
+                    className="cursor-pointer hover:border-blue-500"
+                    variant="outline"
+                    size="icon"
+                    onClick={() => navigate(`/appointments/${appointment.id}`)}
+                  ><Eye /></Button>
+                  <Button 
+                    className="cursor-pointer hover:border-blue-500"
+                    variant="outline"
+                    size="icon"
+                    onClick={() => navigate(`/appointments/${appointment.id}/edit`)}
+                  ><Pencil /></Button>
+                  <DeleteBtn onDeleteCallback={onDeleteCallback} resource="appointments" id={appointment.id} />
+                  </div>
+
+                </TableCell>
+              </TableRow>
+            )
+        })
+        }
       </TableBody>
     </Table>
     </>
