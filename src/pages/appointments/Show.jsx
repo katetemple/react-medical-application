@@ -13,15 +13,17 @@ import {
 } from "@/components/ui/card";
 
 export default function Show() {
-  const [doctor, setDoctor] = useState([]);
+  const [appointment, setAppointment] = useState([]);
+  const [doctors, setDoctors] = useState([]);
+  const [patients, setPatients] = useState([]);
   const { id } = useParams();
   const { token } = useAuth();
 
   useEffect(() => {
-    const fetchDoctor = async () => {
+    const fetchAppointment = async () => {
       const options = {
         method: "GET",
-        url: `/doctors/${id}`,
+        url: `/appointments/${id}`,
         headers: {
             Authorization: `Bearer ${token}`
         }
@@ -30,31 +32,70 @@ export default function Show() {
       try {
         let response = await axios.request(options);
         console.log(response.data);
-        setDoctor(response.data);
+        setAppointment(response.data);
       } catch (err) {
         console.log(err);
       }
     };
 
-    fetchDoctor();
+    fetchAppointment();
   }, []);
 
+  useEffect(() => {
+          const fetchDoctors = async () => {
+            const options = {
+              method: "GET",
+              url: "/doctors",
+            };
+      
+            try {
+              let response = await axios.request(options);
+              console.log(response.data);
+              setDoctors(response.data);
+            } catch (err) {
+              console.log(err);
+            }
+          };
+      
+          fetchDoctors();
+        }, []);
+      
+        useEffect(() => {
+          const fetchPatients = async () => {
+            const options = {
+              method: "GET",
+              url: "/patients",
+            };
+      
+            try {
+              let response = await axios.request(options);
+              console.log(response.data);
+              setPatients(response.data);
+            } catch (err) {
+              console.log(err);
+            }
+          };
+      
+          fetchPatients();
+        }, []);
+
   return (
-    <Card className="w-full max-w-md">
-      <CardHeader>
-        <CardTitle>{doctor.first_name} {doctor.last_name}</CardTitle>
-        <CardDescription>
-          {doctor.specialisation}
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <b>Email:</b> {doctor.email}
-      </CardContent>
-      <CardContent>
-        <b>Phone:</b> {doctor.phone}
-      </CardContent>
-      <CardFooter className="flex-col gap-2">
-      </CardFooter>
-    </Card>
+    <>
+      <Card className="w-full max-w-md">
+        <CardHeader>
+          <CardTitle>{appointment.appointment_date}</CardTitle>
+          <CardDescription>
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <b>Doctor:</b> {appointment.doctor_id}
+        </CardContent>
+        <CardContent>
+          <b>Patient:</b> {appointment.patient_id}
+        </CardContent>
+        <CardFooter className="flex-col gap-2">
+        </CardFooter>
+      </Card>
+    </>
   );
 }

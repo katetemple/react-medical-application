@@ -20,8 +20,6 @@ export default function Create() {
         setForm({
             ...form,
             [e.target.name] : e.target.value,
-            // doctor_id: Number(form.doctor_id),
-            // patient_id: Number(form.patient_id),
         });
     };
 
@@ -33,7 +31,11 @@ export default function Create() {
             headers: {
                 Authorization: `Bearer ${token}`
             },
-            data: form
+            data: {
+                ...form,
+                patient_id: parseInt(form.patient_id),
+                doctor_id: parseInt(form.doctor_id),
+            }
         };
 
         try {

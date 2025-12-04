@@ -7,21 +7,23 @@ import { useParams } from "react-router";
 import { useAuth } from "@/hooks/useAuth";
 
 export default function Edit() {
+    const navigate = useNavigate();
+    const { id } = useParams();
   const [form, setForm] = useState({
-    first_name: "",
-    last_name: "",
-    email: "",
-    phone: "",
-    specialisation: "",
+    appointment_date: "",
+    patient_id: "",
+    doctor_id: "",
   });
+  const [doctors, setDoctors] = useState([]);
+  const [patients, setPatients] = useState([]);
 
   const { token } = useAuth();
 
   useEffect(() => {
-    const fetchDoctor = async () => {
+    const fetchAppointment= async () => {
       const options = {
         method: "GET",
-        url: `/doctors/${id}`,
+        url: `/appointments/${id}`,
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -30,24 +32,58 @@ export default function Edit() {
       try {
         let response = await axios.request(options);
         console.log(response.data);
-        let doctor = response.data;
+        let appointment = response.data;
         setForm({
-            first_name: doctor.first_name,
-            last_name: doctor.last_name,
-            email: doctor.email,
-            phone: doctor.phone.replace(/\s+/g, ""),
-            specialisation: doctor.specialisation,
+            appointment_date: appointment.appointment_date,
+            patient_id: appointment.patient_id,
+            doctor_id: appointment.doctor_id,
         });
       } catch (err) {
         console.log(err);
       }
     };
 
-    fetchDoctor();
+    fetchAppointment();
   }, []);
 
-  const navigate = useNavigate();
-  const { id } = useParams();
+  useEffect(() => {
+          const fetchDoctors = async () => {
+            const options = {
+              method: "GET",
+              url: "/doctors",
+            };
+      
+            try {
+              let response = await axios.request(options);
+              console.log(response.data);
+              setDoctors(response.data);
+            } catch (err) {
+              console.log(err);
+            }
+          };
+      
+          fetchDoctors();
+        }, []);
+      
+        useEffect(() => {
+          const fetchPatients = async () => {
+            const options = {
+              method: "GET",
+              url: "/patients",
+            };
+      
+            try {
+              let response = await axios.request(options);
+              console.log(response.data);
+              setPatients(response.data);
+            } catch (err) {
+              console.log(err);
+            }
+          };
+      
+          fetchPatients();
+        }, []);
+
 
   const handleChange = (e) => {
     setForm({
@@ -56,21 +92,25 @@ export default function Edit() {
     });
   };
 
-  const updateDoctor = async () => {
+  const updateAppointment = async () => {
 
     const options = {
       method: "PATCH",
-      url: `/doctors/${id}`,
+      url: `/appointment/${id}`,
       headers: {
         Authorization: `Bearer ${token}`,
       },
-      data: form,
+      data: {
+        ...form,
+        patient_id: parseInt(form.patient_id),
+        doctor_id: parseInt(form.doctor_id),
+            }
     };
 
     try {
       let response = await axios.request(options);
       console.log(response.data);
-      navigate("/doctors");
+      navigate("/appointments");
     } catch (err) {
       console.log(err);
     }
@@ -79,56 +119,47 @@ export default function Edit() {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log(form);
-    updateDoctor();
+    updateAppointment();
   };
 
   return (
     <>
-      <h1>Update Doctor</h1>
+      <h1>Update Appointment</h1>
       <form onSubmit={handleSubmit}>
         <Input
-          type="text"
-          placeholder="First Name"
-          name="first_name"
-          value={form.first_name}
+          type="date"
+          placeholder="Appointment Date"
+          name="appointment_date"
+          value={form.appointment_date}
           onChange={handleChange}
         />
-        <Input
-          className="mt-2"
-          type="text"
-          placeholder="Last Name"
-          name="last_name"
-          value={form.last_name}
+        
+        <select
+          name="patient_id"
+          value={form.patient_id}
           onChange={handleChange}
-        />
-        <Input
-          className="mt-2"
-          type="text"
-          placeholder="Email"
-          name="email"
-          value={form.email}
-          onChange={handleChange}
-        />
-        <Input
-          className="mt-2"
-          type="text"
-          placeholder="Phone"
-          name="phone"
-          value={form.phone}
-          onChange={handleChange}
-        />
-         <select
-                name="specialisation"
-                value={form.specialisation}
+          className="mt-2 border rounded-md p-2 w-full"
+        >
+                <option value="" disabled hidden className="text-gray-400">Patient</option>
+                {patients.map((patient) => {
+                    return(
+                        <option key={patient.id} value={patient.id}>{patient.first_name} {patient.last_name}</option>
+                    )
+                })}
+            </select>
+
+            <select
+                name="doctor_id"
+                value={form.doctor_id}
                 onChange={handleChange}
                 className="mt-2 border rounded-md p-2 w-full"
             >
-                <option value="" disabled hidden className="text-gray-400">Specialisation</option>
-                <option value="Podiatrist">Podiatrist</option>
-                <option value="Dermatologist">Dermatologist</option>
-                <option value="Pediatrician">Pediatrician</option>
-                <option value="Psychiatrist">Psychiatrist</option>
-                <option value="General Practitioner">General Practitioner</option>
+                <option value="" disabled hidden className="text-gray-400">Doctor</option>
+                {doctors.map((doctor) => {
+                    return(
+                        <option key={doctor.id} value={doctor.id}>{doctor.first_name} {doctor.last_name}</option>
+                    )
+                })}
             </select>
         <Button className="mt-4 cursor-pointer" variant="outline" type="submit">
           Submit
