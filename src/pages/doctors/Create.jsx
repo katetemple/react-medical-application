@@ -1,37 +1,54 @@
 import { useState } from 'react';
+import { useForm, Controller } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+
 import axios from "@/config/api";
-import { useNavigate } from 'react-router';
+import { data, useNavigate } from 'react-router';
 import { useAuth } from "@/hooks/useAuth";
 
+const doctorSchema = z.object({
+    first_name: z.string().min(1, "First name is required"),
+    last_name: z.string().min(1, "Last name is required"),
+    specialisation: z.string().min(1, "Specialisation is required"),
+    email: z.string().email("Invalid email address"),
+    phone: z.string().min(1, "Phone number is required"),
+});
+
 export default function Create() {
-    const [form, setForm] = useState({
-        first_name: "",
-        last_name: "",
-        specialisation: "",
-        email: "",
-        phone: ""
-    });
     const navigate = useNavigate();
     const { token } = useAuth();
 
-    const handleChange = (e) => {
-        setForm({
-            ...form,
-            [e.target.name] : e.target.value
-        });
-    };
+    const form = useForm({
+        resolver: zodResolver(doctorSchema),
+        defaultValues: {
+            first_name: "",
+            last_name: "",
+            specialisation: "",
+            email: "",
+            phone: ""
+        },
+    });
 
-    const createDoctor = async () => {
+    // const [form, setForm] = useState({
+    //     first_name: "",
+    //     last_name: "",
+    //     specialisation: "",
+    //     email: "",
+    //     phone: ""
+    // });
 
+    const submitForm = async (data) => {
         const options = {
             method: "POST",
             url: `/doctors`,
             headers: {
                 Authorization: `Bearer ${token}`
             },
-            data: form
+            data: data,
         };
 
         try {
@@ -44,19 +61,51 @@ export default function Create() {
         } catch (err) {
             console.log(err);
         }
-
     };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        console.log(form);
-        createDoctor();
-    };
+    // const handleChange = (e) => {
+    //     setForm({
+    //         ...form,
+    //         [e.target.name] : e.target.value
+    //     });
+    // };
+
+    // const createDoctor = async () => {
+
+    //     const options = {
+    //         method: "POST",
+    //         url: `/doctors`,
+    //         headers: {
+    //             Authorization: `Bearer ${token}`
+    //         },
+    //         data: form
+    //     };
+
+    //     try {
+    //         let response = await axios.request(options);
+    //         console.log(response.data);
+    //         navigate('/doctors', { state: { 
+    //             type: 'success',
+    //             message: `Doctor "${response.data.first_name} ${response.data.last_name}" created successfully` 
+    //         }});
+    //     } catch (err) {
+    //         console.log(err);
+    //     }
+
+    // };
+
+    // const handleSubmit = (e) => {
+    //     e.preventDefault();
+    //     console.log(form);
+    //     createDoctor();
+    // };
 
   return (
     <>
         <h1>Create a new Doctor</h1>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={form.handleSubmit(submitForm)} className="flex flex-col gap-2">
+
+            {/* FIRST NAME */}
             <Input 
                 type="text" 
                 placeholder="First Name" 

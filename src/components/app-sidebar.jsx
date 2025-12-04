@@ -6,6 +6,9 @@ import {
   IconMicrophone2,
   IconInnerShadowTop,
   IconMusic,
+  IconUser,
+  IconCalendarWeek,
+  IconNotebook
 } from "@tabler/icons-react";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
@@ -44,17 +47,17 @@ const data = {
     {
       title: "Patients",
       url: "/patients",
-      icon: IconTheater,
+      icon: IconUser,
     },
     {
       title: "Appointments",
       url: "/appointments",
-      icon: IconMicrophone2,
+      icon: IconCalendarWeek,
     },
     {
-      title: "Shows",
-      url: "#",
-      icon: IconMusic,
+      title: "Diagnoses",
+      url: "/diagnoses",
+      icon: IconNotebook,
     },
   ],
 };
