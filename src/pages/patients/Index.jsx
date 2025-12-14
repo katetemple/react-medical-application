@@ -86,7 +86,7 @@ export default function Index() {
             <TableCell>{patient.first_name} {patient.last_name}</TableCell>
             <TableCell>{patient.email}</TableCell>
             <TableCell>{patient.phone}</TableCell>
-            <TableCell>{patient.date_of_birth}</TableCell>
+            <TableCell>{new Date(patient.date_of_birth * 1000).toLocaleDateString()}</TableCell>
             <TableCell>{patient.address}</TableCell>
             <TableCell>
               <div className="flex gap-2">

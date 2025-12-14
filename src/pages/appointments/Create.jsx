@@ -1,29 +1,69 @@
-import { useEffect, useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import axios from "@/config/api";
-import { useNavigate } from 'react-router';
 import { useAuth } from "@/hooks/useAuth";
+import { useNavigate } from 'react-router';
+
+import { useEffect, useState } from 'react';
+import { useForm, Controller } from "react-hook-form";
+import * as z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Field,
+  FieldDescription,
+  FieldLabel,
+  FieldError,
+} from "@/components/ui/field";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Input } from '@/components/ui/input';
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { ChevronDownIcon } from "lucide-react";
+
 
 export default function Create() {
-    const [form, setForm] = useState({
-        appointment_date: "",
-        patient_id: "",
-        doctor_id: "",
-    });
     const navigate = useNavigate();
     const { token } = useAuth();
     const [doctors, setDoctors] = useState([]);
     const [patients, setPatients] = useState([]);
 
-    const handleChange = (e) => {
-        setForm({
-            ...form,
-            [e.target.name] : e.target.value,
-        });
-    };
+    const [appointmentDateWindowOpen, setAppointmentDateWindowOpen] = useState(false);
 
-    const createAppointment = async () => {
+    const formSchema = z.object({
+        appointment_date: z.date("Appointment date is required"),
+        patient_id: z.coerce.number().int().positive("Patient is required"),
+        doctor_id: z.coerce.number().int().positive("Doctor is required"),
+    });
+    const form = useForm({
+        resolver: zodResolver(formSchema),
+        defaultValues: {
+            appointment_date: "",
+            patient_id: undefined,
+            doctor_id: undefined,
+        },
+        mode: "onChange",
+    });
+
+    const createAppointment = async (data) => {
 
         const options = {
             method: "POST",
@@ -31,11 +71,7 @@ export default function Create() {
             headers: {
                 Authorization: `Bearer ${token}`
             },
-            data: {
-                ...form,
-                patient_id: parseInt(form.patient_id),
-                doctor_id: parseInt(form.doctor_id),
-            }
+            data,
         };
 
         try {
@@ -48,111 +84,191 @@ export default function Create() {
         } catch (err) {
             // console.log(err);
             console.log("BACKEND ERROR:", err.response?.data);
-    console.log("ZOD ISSUES:", err.response?.data?.error?.issues);
+            console.log("ZOD ISSUES:", err.response?.data?.error?.issues);
         }
 
     };
 
     useEffect(() => {
         const fetchDoctors = async () => {
-          const options = {
-            method: "GET",
-            url: "/doctors",
-          };
+            const options = {
+                method: "GET",
+                url: "/doctors",
+            };
     
-          try {
-            let response = await axios.request(options);
-            console.log(response.data);
-            setDoctors(response.data);
-          } catch (err) {
-            console.log(err);
-          }
+            try {
+                let response = await axios.request(options);
+                console.log(response.data);
+                setDoctors(response.data);
+            } catch (err) {
+                console.log(err);
+            }
         };
     
         fetchDoctors();
-      }, []);
+    }, []);
     
-      useEffect(() => {
+    useEffect(() => {
         const fetchPatients = async () => {
-          const options = {
-            method: "GET",
-            url: "/patients",
-          };
+            const options = {
+                method: "GET",
+                url: "/patients",
+            };
     
-          try {
-            let response = await axios.request(options);
-            console.log(response.data);
-            setPatients(response.data);
-          } catch (err) {
-            console.log(err);
-          }
+            try {
+                let response = await axios.request(options);
+                console.log(response.data);
+                setPatients(response.data);
+            } catch (err) {
+                console.log(err);
+            } 
         };
     
         fetchPatients();
-      }, []);
+    }, []);
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        console.log(form);
-        createAppointment();
+    const handleSubmit = (data) => {
+        console.log(data);
+
+        let formattedData = {
+            ...data,
+            appointment_date: data.appointment_date.toISOString().split("T")[0],
+        };
+        console.log("Formatted Data");
+        console.log(formattedData);
+        createAppointment(formattedData);
     };
 
   return (
     <>
-        <h1>Create a new Appointment</h1>
-        <form onSubmit={handleSubmit}>
-            <Input 
-                type="date" 
-                placeholder="Appointment Date" 
-                name="appointment_date" 
-                value={form.appointment_date} 
-                onChange={handleChange} 
-            />
-            <select
-                name="patient_id"
-                value={form.patient_id}
-                onChange={handleChange}
-                className="mt-2 border rounded-md p-2 w-full"
-            >
-                <option value="" disabled hidden className="text-gray-400">Patient</option>
-                {patients.map((patient) => {
-                    return(
-                        <option key={patient.id} value={patient.id}>{patient.first_name} {patient.last_name}</option>
-                    )
-                })}
-            </select>
-            <select
-                name="doctor_id"
-                value={form.doctor_id}
-                onChange={handleChange}
-                className="mt-2 border rounded-md p-2 w-full"
-            >
-                <option value="" disabled hidden className="text-gray-400">Doctor</option>
-                {doctors.map((doctor) => {
-                    return(
-                        <option key={doctor.id} value={doctor.id}>{doctor.first_name} {doctor.last_name}</option>
-                    )
-                })}
-            </select>
-            {/* <select
-                name="specialisation"
-                value={form.specialisation}
-                onChange={handleChange}
-                className="mt-2 border rounded-md p-2 w-full"
-            >
-                <option value="" disabled hidden className="text-gray-400">Specialisation</option>
-                <option value="Podiatrist">Podiatrist</option>
-                <option value="Dermatologist">Dermatologist</option>
-                <option value="Pediatrician">Pediatrician</option>
-                <option value="Psychiatrist">Psychiatrist</option>
-                <option value="General Practitioner">General Practitioner</option>
-            </select> */}
-            <Button 
-                className="mt-4 cursor-pointer" 
-                variant="outline" 
-                type="submit" 
-            >Submit</Button>
-        </form>
+        <Card className="w-full max-w-md mt-4">
+            <CardHeader>
+                <CardTitle>Create a new Appointment</CardTitle>
+            </CardHeader>
+            <CardContent>
+                <form id="create-appointment-form" onSubmit={form.handleSubmit(handleSubmit)}>
+                    <div className="flex flex-col gap-6">
+
+                        <Controller
+                            name="appointment_date"
+                            control={form.control}
+                            render={({ field, fieldState }) => (
+                                <Field data-invalid={fieldState.invalid}>
+                                    <FieldLabel>Appointment Date</FieldLabel>
+                                    <Popover open={appointmentDateWindowOpen} onOpenChange={setAppointmentDateWindowOpen}>
+                                        <PopoverTrigger asChild>
+                                            <Button
+                                                variant="outline"
+                                                id="date"
+                                                className="w-48 justify-between font-normal"
+                                            >
+                                                {field.value
+                                                    ? field.value.toLocaleDateString()
+                                                    : "Select date"}
+                                                <ChevronDownIcon />
+                                            </Button>
+                                        </PopoverTrigger>
+                                        <PopoverContent
+                                            className="w-auto overflow-hidden p-0"
+                                            align="start"
+                                        >
+                                            <Calendar
+                                                mode="single"
+                                                selected={field.value}
+                                                captionLayout="dropdown"
+                                                onSelect={(selectedDate) => {
+                                                field.onChange(selectedDate);
+                                                setDobWindowOpen(false);
+                                                }}
+                                            />
+                                        </PopoverContent>
+                                    </Popover>
+
+                                    {fieldState.invalid && (
+                                        <FieldError errors={[fieldState.error]} />
+                                    )}
+                                </Field>
+                            )}
+                        />
+
+                        <Controller 
+                            name="patient_id"
+                            control={form.control}
+                            render={({ field, fieldState }) => (
+                                <Field data-invalid={fieldState.invalid}>
+                                    <FieldLabel>Patient</FieldLabel>
+                                    <Select
+                                        name={field.name}
+                                        onValueChange={field.onChange}
+                                        value={field.value?.toString()}
+                                    >
+                                        <SelectTrigger aria-invalid={fieldState.invalid}>
+                                            <SelectValue placeholder="Select a patient" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {patients.map((patient) => (
+                                                <SelectItem 
+                                                    key={patient.id}
+                                                    value={patient.id.toString()}
+                                                >
+                                                    {patient.first_name} {patient.last_name}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+
+                                    {fieldState.invalid && (
+                                        <FieldError errors={[fieldState.error]} />
+                                    )}
+                                </Field>
+                            )}
+                        />
+
+                        <Controller 
+                            name="doctor_id"
+                            control={form.control}
+                            render={({ field, fieldState }) => (
+                                <Field data-invalid={fieldState.invalid}>
+                                    <FieldLabel>Doctor</FieldLabel>
+                                    <Select
+                                        name={field.name}
+                                        onValueChange={field.onChange}
+                                        value={field.value?.toString()}
+                                    >
+                                        <SelectTrigger aria-invalid={fieldState.invalid}>
+                                            <SelectValue placeholder="Select a doctor" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {doctors.map((doctor) => (
+                                                <SelectItem 
+                                                    key={doctor.id}
+                                                    value={doctor.id.toString()}
+                                                >
+                                                    {doctor.first_name} {doctor.last_name}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+
+                                    {fieldState.invalid && (
+                                        <FieldError errors={[fieldState.error]} />
+                                    )}
+                                </Field>
+                            )}
+                        />    
+
+                    </div>
+                </form>
+            </CardContent>
+            <CardFooter>
+                <Button 
+                    className="w-full cursor-pointer" 
+                    form="create-appointment-form"
+                    variant="outline" 
+                    type="submit" 
+                >Submit</Button>
+            </CardFooter>
+        </Card>
     </>
   );
 }

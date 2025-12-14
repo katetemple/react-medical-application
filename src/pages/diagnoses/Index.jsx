@@ -131,7 +131,7 @@ export default function Index() {
               <TableRow key={d.id}>
                 <TableCell>{patient.first_name} {patient.last_name}</TableCell>
                 <TableCell>{d.condition}</TableCell>
-                <TableCell>{d.diagnosis_date}</TableCell>
+                <TableCell>{new Date(d.diagnosis_date * 1000).toLocaleDateString()}</TableCell>
                 <TableCell>
                   <div className="flex gap-2">
                   <Button 

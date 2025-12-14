@@ -131,7 +131,7 @@ export default function Index() {
           
             return (
               <TableRow key={appointment.id}>
-                <TableCell>{appointment.appointment_date}</TableCell>
+                <TableCell>{new Date(appointment.appointment_date * 1000).toLocaleDateString()}</TableCell>
                 <TableCell>{patient.first_name} {patient.last_name}</TableCell>
                 <TableCell>{doctor.first_name} {doctor.last_name}</TableCell>
                 <TableCell>
