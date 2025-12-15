@@ -26,6 +26,8 @@ import AppointmentsCreate from '@/pages/appointments/Create';
 import AppointmentsEdit from '@/pages/appointments/Edit';
 
 import DiagnosesIndex from '@/pages/diagnoses/Index';
+import DiagnosesCreate from '@/pages/diagnoses/Create';
+import DiagnosesEdit from '@/pages/diagnoses/Edit';
 
 
 export default function App() {
@@ -71,6 +73,8 @@ export default function App() {
 
                   {/* Diagnoses */}
                   <Route path="/diagnoses" element={<DiagnosesIndex />} />
+                  <Route path="/diagnoses/create" element={<DiagnosesCreate />} />
+                  <Route path="/diagnoses/:id/edit" element={<DiagnosesEdit />} />
     
                 </Routes>
               </div>
