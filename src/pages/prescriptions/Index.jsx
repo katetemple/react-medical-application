@@ -28,18 +28,19 @@ import { toast } from "sonner";
 // } from "@/components/ui/card";
 
 export default function Index() {
-  const [appointments, setAppointments] = useState([]);
+  const [prescriptions, setPrescriptions] = useState([]);
   const [doctors, setDoctors] = useState([]);
   const [patients, setPatients] = useState([]);
+  const [diagnoses, setDiagnoses] = useState([])
 
   const navigate = useNavigate();
   const { token } = useAuth();
   
   useEffect(() => {
-    const fetchAppointments = async () => {
+    const fetchPrescriptions = async () => {
       const options = {
         method: "GET",
-        url: "/appointments",
+        url: "/prescriptions",
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -48,13 +49,13 @@ export default function Index() {
       try {
         let response = await axios.request(options);
         console.log(response.data);
-        setAppointments(response.data);
+        setPrescriptions(response.data);
       } catch (err) {
         console.log(err);
       }
     };
 
-    fetchAppointments();
+    fetchPrescriptions();
   }, []);
 
   useEffect(() => {
@@ -95,9 +96,31 @@ export default function Index() {
     fetchPatients();
   }, []);
 
+  useEffect(() => {
+    const fetchDiagnoses = async () => {
+      const options = {
+        method: "GET",
+        url: "/diagnoses",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
+      try {
+        let response = await axios.request(options);
+        console.log(response.data);
+        setDiagnoses(response.data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    fetchDiagnoses();
+  }, []);
+
   const onDeleteCallback = (id) => {
-    toast.success("Appointment deleted successfully");
-    setAppointments(appointments.filter(appointment => appointment.id !== id));
+    toast.success("Prescription deleted successfully");
+    setPrescriptions(prescriptions.filter(prescription => prescription.id !== id));
   
   };
 
@@ -108,47 +131,55 @@ export default function Index() {
         asChild
         variant='outline'
         className='mb-4 mr-auto block'
-      ><Link size='sm' to={`/appointments/create`}>Create New Appointment</Link>
+      ><Link size='sm' to={`/appointments/create`}>Create New Prescription</Link>
       </Button>
 
 
     <Table>
-      <TableCaption>A list of all appointments.</TableCaption>
+      <TableCaption>A list of all prescriptions.</TableCaption>
       <TableHeader>
         <TableRow>
-          <TableHead>Date</TableHead>
           <TableHead>Patient</TableHead>
           <TableHead>Doctor</TableHead>
-          <TableHead></TableHead>
+          <TableHead>Diagnosis</TableHead>
+          <TableHead>Medication</TableHead>
+          <TableHead>Dosage</TableHead>
+          <TableHead>Start date</TableHead>
+          <TableHead>End date</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
         {
-          appointments.map((appointment) => {
+          prescriptions.map((prescription) => {
 
-            const doctor = doctors.find(doctor => Number(appointment.doctor_id) === doctor.id);
-            const patient = patients.find(patient => Number(appointment.patient_id) === patient.id);
+            const doctor = doctors.find(doctor => Number(prescription.doctor_id) === doctor.id);
+            const patient = patients.find(patient => Number(prescription.patient_id) === patient.id);
+            const diagnosis = diagnoses.find(diagnosis => Number(diagnosis.diagnosis_id) === Number(diagnosis.id));
           
             return (
-              <TableRow key={appointment.id}>
-                <TableCell>{new Date(appointment.appointment_date * 1000).toLocaleDateString()}</TableCell>
+              <TableRow key={prescription.id}>
                 <TableCell>{patient.first_name} {patient.last_name}</TableCell>
                 <TableCell>{doctor.first_name} {doctor.last_name}</TableCell>
+                <TableCell>{diagnoses.condition}</TableCell>
+                <TableCell>{prescription.medication}</TableCell>
+                <TableCell>{prescription.dosage}</TableCell>
+                <TableCell>{new Date(prescription.start_date).toLocaleDateString()}</TableCell>
+                <TableCell>{new Date(prescription.end_date).toLocaleDateString()}</TableCell>
                 <TableCell>
                   <div className="flex gap-2">
                   <Button 
                     className="cursor-pointer hover:border-blue-500"
                     variant="outline"
                     size="icon"
-                    onClick={() => navigate(`/appointments/${appointment.id}`)}
+                    onClick={() => navigate(`/prescriptions/${prescription.id}`)}
                   ><Eye /></Button>
                   <Button 
                     className="cursor-pointer hover:border-blue-500"
                     variant="outline"
                     size="icon"
-                    onClick={() => navigate(`/appointments/${appointment.id}/edit`)}
+                    onClick={() => navigate(`/prescriptions/${prescription.id}/edit`)}
                   ><Pencil /></Button>
-                  <DeleteBtn onDeleteCallback={onDeleteCallback} resource="appointments" id={appointment.id} />
+                  <DeleteBtn onDeleteCallback={onDeleteCallback} resource="prescriptions" id={prescription.id} />
                   </div>
 
                 </TableCell>

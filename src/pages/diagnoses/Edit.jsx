@@ -65,31 +65,31 @@ export default function Create() {
     });
 
     useEffect(() => {
-            const fetchDiagnoses = async () => {
-                const options = {
-                    method: "GET",
-                    url: `/diagnoses/${id}`,
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                };
-    
-                try {
-                    let response = await axios.request(options);
-                    console.log(response.data);
-                    let diagnoses = response.data;
-                    form.reset({
-                        patient_id: diagnoses.patient_id,
-                        condition: diagnoses.condition,
-                        diagnosis_date: new Date(diagnoses.diagnosis_date * 1000),
-                    });
-                } catch (err) {
-                    console.log(err);
-                }
+        const fetchDiagnoses = async () => {
+            const options = {
+                method: "GET",
+                url: `/diagnoses/${id}`,
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
             };
     
-            fetchDiagnoses();
-        }, []);
+            try {
+                let response = await axios.request(options);
+                console.log(response.data);
+                let diagnoses = response.data;
+                form.reset({
+                    patient_id: diagnoses.patient_id,
+                    condition: diagnoses.condition,
+                    diagnosis_date: new Date(diagnoses.diagnosis_date * 1000),
+                });
+            } catch (err) {
+                console.log(err);
+            }
+        };
+    
+        fetchDiagnoses();
+    }, []);
     
     useEffect(() => {
         const fetchPatients = async () => {
