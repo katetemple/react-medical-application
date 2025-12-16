@@ -131,7 +131,7 @@ export default function Index() {
         asChild
         variant='outline'
         className='mb-4 mr-auto block'
-      ><Link size='sm' to={`/appointments/create`}>Create New Prescription</Link>
+      ><Link size='sm' to={`/prescriptions/create`}>Create New Prescription</Link>
       </Button>
 
 
@@ -154,17 +154,25 @@ export default function Index() {
 
             const doctor = doctors.find(doctor => Number(prescription.doctor_id) === doctor.id);
             const patient = patients.find(patient => Number(prescription.patient_id) === patient.id);
-            const diagnosis = diagnoses.find(diagnosis => Number(diagnosis.diagnosis_id) === Number(diagnosis.id));
+            const diagnosis = diagnoses.find(diagnosis => Number(prescription.diagnosis_id) === Number(diagnosis.id));
           
+            // handles loading times so page doesnt break
+            if(!doctor || !patient || !diagnosis) {
+              return(
+                <TableRow key={prescription.id}>
+                  <TableCell colSpan={7}>Loading...</TableCell>
+                </TableRow>
+              );
+            }
             return (
               <TableRow key={prescription.id}>
                 <TableCell>{patient.first_name} {patient.last_name}</TableCell>
-                <TableCell>{doctor.first_name} {doctor.last_name}</TableCell>
-                <TableCell>{diagnoses.condition}</TableCell>
+                <TableCell>Dr. {doctor.first_name} {doctor.last_name}</TableCell>
+                <TableCell>{diagnosis.condition}</TableCell>
                 <TableCell>{prescription.medication}</TableCell>
                 <TableCell>{prescription.dosage}</TableCell>
-                <TableCell>{new Date(prescription.start_date).toLocaleDateString()}</TableCell>
-                <TableCell>{new Date(prescription.end_date).toLocaleDateString()}</TableCell>
+                <TableCell>{new Date(prescription.start_date * 1000).toLocaleDateString()}</TableCell>
+                <TableCell>{new Date(prescription.end_date * 1000).toLocaleDateString()}</TableCell>
                 <TableCell>
                   <div className="flex gap-2">
                   <Button 

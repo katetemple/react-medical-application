@@ -126,6 +126,15 @@ export default function Index() {
         {
           diagnoses.map((d) => {
             const patient = patients.find(patient => d.patient_id === patient.id);
+
+            // handles loading times so page doesnt break
+            if(!patient) {
+              return(
+                <TableRow key={d.id}>
+                  <TableCell colSpan={7}>Loading...</TableCell>
+                </TableRow>
+              );
+            }
           
             return (
               <TableRow key={d.id}>

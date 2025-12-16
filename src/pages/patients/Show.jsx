@@ -44,20 +44,17 @@ export default function Show() {
       <CardHeader>
         <CardTitle>{patient.first_name} {patient.last_name}</CardTitle>
         <CardDescription>
-          
+          Date of Birth: {new Date(patient.date_of_birth * 1000).toLocaleDateString()}
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <b>Email:</b> {patient.email}
+        <span className="font-semibold">Email:</span> {patient.email}
       </CardContent>
       <CardContent>
-        <b>Phone:</b> {patient.phone}
+        <span className="font-semibold">Phone:</span> {patient.phone}
       </CardContent>
       <CardContent>
-        <b>Address:</b> {patient.address}
-      </CardContent>
-      <CardContent>
-        <b>Date of Birth:</b> {patient.date_of_birth}
+        <span className="font-semibold">Address:</span> {patient.address}
       </CardContent>
       <CardFooter className="flex-col gap-2">
       </CardFooter>

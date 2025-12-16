@@ -82,7 +82,7 @@ export default function Index() {
       <TableBody>
         {doctors.map((doctor) => (
           <TableRow key={doctor.id}>
-            <TableCell>{doctor.first_name} {doctor.last_name}</TableCell>
+            <TableCell>Dr. {doctor.first_name} {doctor.last_name}</TableCell>
             <TableCell>{doctor.specialisation}</TableCell>
             <TableCell>{doctor.email}</TableCell>
             <TableCell>{doctor.phone}</TableCell>

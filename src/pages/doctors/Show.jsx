@@ -42,16 +42,16 @@ export default function Show() {
   return (
     <Card className="w-full max-w-md">
       <CardHeader>
-        <CardTitle>{doctor.first_name} {doctor.last_name}</CardTitle>
+        <CardTitle>Dr. {doctor.first_name} {doctor.last_name}</CardTitle>
         <CardDescription>
           {doctor.specialisation}
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <b>Email:</b> {doctor.email}
+        <span className="font-semibold">Email:</span> {doctor.email}
       </CardContent>
       <CardContent>
-        <b>Phone:</b> {doctor.phone}
+        <span className="font-semibold">Phone:</span> {doctor.phone}
       </CardContent>
       <CardFooter className="flex-col gap-2">
       </CardFooter>

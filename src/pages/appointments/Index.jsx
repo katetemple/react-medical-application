@@ -128,12 +128,21 @@ export default function Index() {
 
             const doctor = doctors.find(doctor => Number(appointment.doctor_id) === doctor.id);
             const patient = patients.find(patient => Number(appointment.patient_id) === patient.id);
+
+            // handles loading times so page doesnt break
+            if(!patient || !doctor) {
+              return(
+                <TableRow key={appointment.id}>
+                  <TableCell colSpan={7}>Loading...</TableCell>
+                </TableRow>
+              );
+            }
           
             return (
               <TableRow key={appointment.id}>
                 <TableCell>{new Date(appointment.appointment_date * 1000).toLocaleDateString()}</TableCell>
                 <TableCell>{patient.first_name} {patient.last_name}</TableCell>
-                <TableCell>{doctor.first_name} {doctor.last_name}</TableCell>
+                <TableCell>Dr. {doctor.first_name} {doctor.last_name}</TableCell>
                 <TableCell>
                   <div className="flex gap-2">
                   <Button 

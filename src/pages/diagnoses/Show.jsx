@@ -11,9 +11,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  IconCalendarWeekFilled,
+  IconFaceMaskFilled,
+  IconUserFilled,
+} from "@tabler/icons-react";
 
 export default function Show() {
-  const [diagnoses, setDiagnoses] = useState(null);
+  const [diagnoses, setDiagnoses] = useState([]);
   const [patients, setPatients] = useState([]);
   const { id } = useParams();
   const { token } = useAuth();
@@ -61,19 +66,27 @@ export default function Show() {
   
   const patient = patients.find(patient => Number(diagnoses.patient_id) === Number(patient.id))
 
+  // handle loading
+  if(!patient) {
+    return (
+      <CardTitle>Loading...</CardTitle>
+    )
+  }
+
   return (
     <>
           <Card className="w-full max-w-md">
             <CardHeader>
-              <CardTitle>{patient.first_name} {patient.last_name}</CardTitle>
-              <CardDescription>
-              </CardDescription>
+              <CardTitle>Diagnosis</CardTitle>
             </CardHeader>
-            <CardContent>
-              <b>Doctor:</b> 
+            <CardContent className="flex items-center gap-2">
+              <IconUserFilled/><span className="font-semibold">Patient:</span> {patient.first_name} {patient.last_name}
             </CardContent>
-            <CardContent>
-              <b>Patient:</b> 
+            <CardContent className="flex items-center gap-2">
+              <IconFaceMaskFilled/><span className="font-semibold">Condition:</span> {diagnoses.condition} 
+            </CardContent>
+            <CardContent className="flex items-center gap-2">
+              <IconCalendarWeekFilled/><span className="font-semibold">Diagnosed on:</span>{new Date(diagnoses.diagnosis_date * 1000).toLocaleDateString()}
             </CardContent>
             <CardFooter className="flex-col gap-2">
             </CardFooter>

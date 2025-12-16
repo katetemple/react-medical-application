@@ -14,21 +14,24 @@ import {
 import {
   IconCalendarWeekFilled,
   IconUserFilled,
-  IconStethoscope
+  IconStethoscope,
+  IconPillFilled,
+  IconFaceMaskFilled,
 } from "@tabler/icons-react";
 
 export default function Show() {
-  const [appointment, setAppointment] = useState([]);
+  const [prescription, setPrescription] = useState([]);
   const [doctors, setDoctors] = useState([]);
   const [patients, setPatients] = useState([]);
+  const [diagnoses, setDiagnoses] = useState([]);
   const { id } = useParams();
   const { token } = useAuth();
 
   useEffect(() => {
-    const fetchAppointment = async () => {
+    const fetchPrescription = async () => {
       const options = {
         method: "GET",
-        url: `/appointments/${id}`,
+        url: `/prescriptions/${id}`,
         headers: {
             Authorization: `Bearer ${token}`
         }
@@ -37,13 +40,13 @@ export default function Show() {
       try {
         let response = await axios.request(options);
         console.log(response.data);
-        setAppointment(response.data);
+        setPrescription(response.data);
       } catch (err) {
         console.log(err);
       }
     };
 
-    fetchAppointment();
+    fetchPrescription();
   }, []);
 
   useEffect(() => {
@@ -84,10 +87,33 @@ export default function Show() {
           fetchPatients();
         }, []);
 
-  const doctor = doctors.find(doctor => doctor.id === appointment.doctor_id)
-  const patient = patients.find(patient => patient.id === appointment.patient_id)
+        useEffect(() => {
+          const fetchDiagnoses = async () => {
+            const options = {
+              method: "GET",
+              url: "/diagnoses",
+              headers: {
+                Authorization: `Bearer ${token}`
+              }
+            };
+      
+            try {
+              let response = await axios.request(options);
+              console.log(response.data);
+              setDiagnoses(response.data);
+            } catch (err) {
+              console.log(err);
+            }
+          };
+      
+          fetchDiagnoses();
+        }, []);
 
-  if(!doctor || !patient) {
+  const doctor = doctors.find(doctor => doctor.id === prescription.doctor_id)
+  const patient = patients.find(patient => patient.id === prescription.patient_id)
+  const diagnosis = diagnoses.find(diagnosis => diagnosis.id === prescription.patient_id)
+
+  if(!doctor || !patient || !diagnosis) {
     return(
       <CardTitle>Loading...</CardTitle>
     )
@@ -95,21 +121,24 @@ export default function Show() {
 
   return (
     <>
-      <Card className="w-full max-w-md">
+      <Card className="w-full max-w-lg">
         <CardHeader>
-          <CardTitle>Appointment</CardTitle>
+          <CardTitle>Prescription</CardTitle>
           <CardDescription>
+            Prescribed by Dr. {doctor.first_name} {doctor.last_name}
           </CardDescription>
         </CardHeader>
-        <CardContent className="flex items-center gap-2">
-          <IconCalendarWeekFilled/>
-          <span className="font-semibold">Date:</span>{new Date(appointment.appointment_date * 1000).toLocaleDateString()}
-        </CardContent>
         <CardContent className="flex items-center gap-2">
           <IconUserFilled /><span className="font-semibold">Patient:</span> {patient.first_name} {patient.last_name}
         </CardContent>
         <CardContent className="flex items-center gap-2">
-          <IconStethoscope/><span className="font-semibold">Doctor:</span> {doctor.first_name} {doctor.last_name}
+          <IconFaceMaskFilled/><span className="font-semibold">Condition:</span> {diagnosis.condition}
+        </CardContent>
+        <CardContent className="flex items-center gap-2">
+          <IconPillFilled/><span className="font-semibold">Medication:</span> {prescription.medication} {prescription.dosage} 
+        </CardContent>
+        <CardContent className="flex items-center gap-2">
+          <IconCalendarWeekFilled/><span className="font-semibold">Start-End Date:</span>{new Date(prescription.start_date * 1000).toLocaleDateString()}-{new Date(prescription.end_date * 1000).toLocaleDateString()}
         </CardContent>
         <CardFooter className="flex-col gap-2">
         </CardFooter>
