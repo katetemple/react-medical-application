@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
 import { Eye, Pencil } from "lucide-react";
 import DeleteBtn from "@/components/DeleteBtn";
+import { useAuth } from "@/hooks/useAuth";
 
 import {
   Table,
@@ -15,6 +16,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { toast } from "sonner";
+import { IconCirclePlusFilled } from "@tabler/icons-react";
 
 // import {
 //   Card,
@@ -28,6 +30,7 @@ import { toast } from "sonner";
 
 export default function Index() {
   const [doctors, setDoctors] = useState([]);
+  const { token } = useAuth();
 
   const navigate = useNavigate();
   
@@ -96,8 +99,8 @@ export default function Index() {
       <Button
         asChild
         variant='outline'
-        className='mb-4 mr-auto block'
-      ><Link size='sm' to={`/doctors/create`}>Create New Doctor</Link>
+        className='mb-4 mr-auto block bg-primary text-white'
+      ><Link size='sm' to={`/doctors/create`} className="flex items-center"><IconCirclePlusFilled/>Create New Doctor</Link>
       </Button>
 
 
@@ -119,7 +122,9 @@ export default function Index() {
             <TableCell>{doctor.specialisation}</TableCell>
             <TableCell>{doctor.email}</TableCell>
             <TableCell>{doctor.phone}</TableCell>
-            <TableCell>
+
+            {/* only show if logged in */}
+            { token && <TableCell> 
               <div className="flex gap-2">
               <Button 
                 className="cursor-pointer hover:border-blue-500"
@@ -135,8 +140,8 @@ export default function Index() {
               ><Pencil /></Button>
               <DeleteBtn onDeleteCallback={onDeleteCallback} resource="doctors" id={doctor.id} />
               </div>
+              </TableCell>}
 
-            </TableCell>
           </TableRow>
         ))}
       </TableBody>

@@ -16,6 +16,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { toast } from "sonner";
+import { IconCirclePlusFilled } from "@tabler/icons-react";
 
 // import {
 //   Card,
@@ -107,8 +108,8 @@ export default function Index() {
       <Button
         asChild
         variant='outline'
-        className='mb-4 mr-auto block'
-      ><Link size='sm' to={`/appointments/create`}>Create New Appointment</Link>
+        className='mb-4 mr-auto block bg-primary text-white'
+      ><Link size='sm' to={`/appointments/create`} className="flex items-center"><IconCirclePlusFilled/>Create New Appointment</Link>
       </Button>
 
 

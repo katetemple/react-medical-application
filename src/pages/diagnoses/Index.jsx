@@ -16,6 +16,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { toast } from "sonner";
+import { IconCirclePlusFilled } from "@tabler/icons-react";
 
 // import {
 //   Card,
@@ -107,8 +108,8 @@ export default function Index() {
       <Button
         asChild
         variant='outline'
-        className='mb-4 mr-auto block'
-      ><Link size='sm' to={`/diagnoses/create`}>Create New Diagnosis</Link>
+        className='mb-4 mr-auto block bg-primary text-white'
+      ><Link size='sm' to={`/diagnoses/create`} className="flex items-center"><IconCirclePlusFilled/>Create New Diagnosis</Link>
       </Button>
 
 

@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
 import { Eye, Pencil } from "lucide-react";
 import DeleteBtn from "@/components/DeleteBtn";
+import { useAuth } from "@/hooks/useAuth";
 
 import {
   Table,
@@ -15,6 +16,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { toast } from "sonner";
+
+import { IconCirclePlusFilled } from "@tabler/icons-react";
 
 // import {
 //   Card,
@@ -28,6 +31,7 @@ import { toast } from "sonner";
 
 export default function Index() {
   const [patients, setPatients] = useState([]);
+  const { token } = useAuth();
 
   const navigate = useNavigate();
   
@@ -55,7 +59,6 @@ export default function Index() {
   const onDeleteCallback = async (id) => {
     try {
       const token = localStorage.getItem("token");
-
       const authHeaders = {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -71,35 +74,30 @@ export default function Index() {
       const appointments = appointmentsRes.data.filter(
         appointment => Number(appointment.patient_id) === Number(id)
       );
-
       const prescriptions = prescriptionsRes.data.filter(
         prescription => Number(prescription.patient_id) === Number(id)
       );
-
       const diagnoses = diagnosesRes.data.filter(
         diagnosis => Number(diagnosis.patient_id) === Number(id)
       );
 
-      // Delete dependencies FIRST
+      // delete these FIRST
       await Promise.all(
         prescriptions.map(prescription => 
           axios.delete(`/prescriptions/${prescription.id}`, authHeaders)
         ),
       )
-
       await Promise.all(
         appointments.map(appointment => 
           axios.delete(`/appointments/${appointment.id}`, authHeaders)
         ),
       )
-
       await Promise.all(
         diagnoses.map(diagnosis => 
           axios.delete(`/diagnoses/${diagnosis.id}`, authHeaders)
         ),
       )
       
-
       await axios.delete(`/patients/${id}`, authHeaders)
 
       setPatients(patients.filter(patient => patient.id !== id));
@@ -114,13 +112,11 @@ export default function Index() {
   return (
     <>
     
-      <Button
-        asChild
-        variant='outline'
-        className='mb-4 mr-auto block'
-      ><Link size='sm' to={`/patients/create`}>Create New Patient</Link>
+      <Button asChild variant='outline' className='mb-4 mr-auto block bg-primary text-white'>
+        <Link size='sm' to={`/patients/create`} className="flex items-center">
+          <IconCirclePlusFilled/>Create New Patient
+        </Link>
       </Button>
-
 
     <Table>
       <TableCaption>A list of all patients.</TableCaption>
@@ -142,7 +138,8 @@ export default function Index() {
             <TableCell>{patient.phone}</TableCell>
             <TableCell>{new Date(patient.date_of_birth * 1000).toLocaleDateString()}</TableCell>
             <TableCell>{patient.address}</TableCell>
-            <TableCell>
+
+            { token &&<TableCell>
               <div className="flex gap-2">
               <Button 
                 className="cursor-pointer hover:border-blue-500"
@@ -159,7 +156,7 @@ export default function Index() {
               <DeleteBtn onDeleteCallback={onDeleteCallback} resource="patients" id={patient.id} />
               </div>
 
-            </TableCell>
+            </TableCell>}
           </TableRow>
         ))}
       </TableBody>

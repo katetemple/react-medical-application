@@ -21,6 +21,30 @@ export const AuthProvider = ({ children }) => {
         }
     });
 
+    const onRegister = async (first_name, last_name, email, password) => {
+        const options = {
+            method: "POST",
+            url: "/register",
+            data: {
+                first_name,
+                last_name,
+                email,
+                password
+            },
+        };
+
+
+        try {
+            await axios.request(options);
+
+            await onLogin(email, password);
+            return null;
+        } catch (err) {
+            console.log(err.response.data)
+            return err.response?.data;
+        }
+    };
+
     const onLogin = async (email, password) => {
         const options = {
             method: "POST",
@@ -50,7 +74,8 @@ export const AuthProvider = ({ children }) => {
     const value = {
         token,
         onLogin,
-        onLogout
+        onLogout,
+        onRegister
     };
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

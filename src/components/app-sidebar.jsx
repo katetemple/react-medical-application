@@ -10,6 +10,7 @@ import {
   IconCalendarWeek,
   IconNotebook,
   IconPillFilled,
+  IconMedicalCross
 } from "@tabler/icons-react";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
@@ -101,8 +102,8 @@ export function AppSidebar({ ...props }) {
                 className="data-[slot=sidebar-menu-button]:!p-1.5"
               >
                 <a href="#">
-                  <IconInnerShadowTop className="!size-5" />
-                  <span className="text-base font-semibold">Acme Inc.</span>
+                  <IconMedicalCross className="!size-5 text-primary" />
+                  <span className="text-base font-semibold">Medical Clinic</span>
                 </a>
               </SidebarMenuButton>
             </SidebarMenuItem>
@@ -112,7 +113,10 @@ export function AppSidebar({ ...props }) {
           <NavMain items={data.navMain} />
         </SidebarContent>
         <SidebarFooter>
-          <NavUser user={data.user} />
+          <NavUser 
+            user={data.user} 
+          
+          />
         </SidebarFooter>
       </Sidebar>
     </>
