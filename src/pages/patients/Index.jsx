@@ -51,9 +51,63 @@ export default function Index() {
     fetchPatients();
   }, []);
 
-  const onDeleteCallback = (id) => {
-    toast.success("Patient deleted successfully");
-    setPatients(patients.filter(patient => patient.id !== id));
+  // includes handling cascade deletes, if a patient is deleted and has appointments, prescriptions, diagnoses, they also get deleted
+  const onDeleteCallback = async (id) => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const authHeaders = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
+      const [appointmentsRes, prescriptionsRes, diagnosesRes] = await Promise.all([
+        axios.get("/appointments", authHeaders),
+        axios.get("/prescriptions", authHeaders),
+        axios.get("/diagnoses", authHeaders),
+      ]);
+
+      const appointments = appointmentsRes.data.filter(
+        appointment => Number(appointment.patient_id) === Number(id)
+      );
+
+      const prescriptions = prescriptionsRes.data.filter(
+        prescription => Number(prescription.patient_id) === Number(id)
+      );
+
+      const diagnoses = diagnosesRes.data.filter(
+        diagnosis => Number(diagnosis.patient_id) === Number(id)
+      );
+
+      // Delete dependencies FIRST
+      await Promise.all(
+        prescriptions.map(prescription => 
+          axios.delete(`/prescriptions/${prescription.id}`, authHeaders)
+        ),
+      )
+
+      await Promise.all(
+        appointments.map(appointment => 
+          axios.delete(`/appointments/${appointment.id}`, authHeaders)
+        ),
+      )
+
+      await Promise.all(
+        diagnoses.map(diagnosis => 
+          axios.delete(`/diagnoses/${diagnosis.id}`, authHeaders)
+        ),
+      )
+      
+
+      await axios.delete(`/patients/${id}`, authHeaders)
+
+      setPatients(patients.filter(patient => patient.id !== id));
+      toast.success("Patient deleted successfully");
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to delete patient");
+    }
   
   };
 

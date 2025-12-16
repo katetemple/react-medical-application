@@ -1,28 +1,32 @@
 import { Button } from "@/components/ui/button";
 import { Trash } from "lucide-react";
-import axios from "@/config/api";
+// import axios from "@/config/api";
 import { useState } from "react";
 
 export default function DeleteBtn({ resource, id, onDeleteCallback }) {
     const [isDeleting, setIsDeleting] = useState(false);
 
-    let token = localStorage.getItem('token');
+    // let token = localStorage.getItem('token');
 
     const onDelete = async () => {
-        const options = {
-            method: "DELETE",
-            url: `/${resource}/${id}`,
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-      };
+    //     const options = {
+    //         method: "DELETE",
+    //         url: `/${resource}/${id}`,
+    //         headers: {
+    //             Authorization: `Bearer ${token}`
+    //         }
+    //   };
 
       try {
-        let response = await axios.request(options);
-        console.log(response.data);
-        if (onDeleteCallback) {
-            onDeleteCallback(id);
+        if(onDeleteCallback) {
+            await onDeleteCallback(id);
         }
+            // setIsDeleting(false);
+        // let response = await axios.request(options);
+        // console.log(response.data);
+        // if (onDeleteCallback) {
+        //     onDeleteCallback(id);
+        // }
         
       } catch (err) {
         console.log(err);

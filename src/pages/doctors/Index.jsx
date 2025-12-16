@@ -51,11 +51,44 @@ export default function Index() {
     fetchDoctors();
   }, []);
 
-  const onDeleteCallback = (id) => {
-    toast.success("Doctor deleted successfully");
-    setDoctors(doctors.filter(doctor => doctor.id !== id));
+  // handles deleting associated appointments with the deleted doctor, leaves prescriptions and diagnoses alone as they shouldnt be deleted if a doctor is deleted
+  const onDeleteCallback = async (id) => {
+      try {
+        const token = localStorage.getItem("token");
   
-  };
+        const authHeaders = {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        };
+        
+        // fetch appointments
+        const appointmentsRes = await axios.get("/appointments", authHeaders);
+
+        // filter appointments for this doctor
+        const appointments = appointmentsRes.data.filter(
+          appointment => Number(appointment.doctor_id) === Number(id)
+        );
+  
+        // Delete related appointments first
+        await Promise.all(
+          appointments.map(appointment => 
+            axios.delete(`/appointments/${appointment.id}`, authHeaders)
+          ),
+        )
+  
+        // delete doctor
+        await axios.delete(`/doctors/${id}`, authHeaders)
+  
+        // update ui
+        setDoctors(doctors.filter(doctor => doctor.id !== id));
+        toast.success("Doctor deleted successfully");
+      } catch (err) {
+        console.error(err);
+        toast.error("Failed to delete doctor");
+      }
+    
+    };
 
   return (
     <>
