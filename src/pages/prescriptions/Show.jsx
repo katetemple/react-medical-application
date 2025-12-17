@@ -111,7 +111,7 @@ export default function Show() {
 
   const doctor = doctors.find(doctor => doctor.id === prescription.doctor_id)
   const patient = patients.find(patient => patient.id === prescription.patient_id)
-  const diagnosis = diagnoses.find(diagnosis => diagnosis.id === prescription.patient_id)
+  const diagnosis = diagnoses.find(diagnosis => diagnosis.id === prescription.diagnosis_id)
 
   if(!doctor || !patient || !diagnosis) {
     return(
@@ -121,26 +121,25 @@ export default function Show() {
 
   return (
     <>
-      <Card className="w-full max-w-lg">
-        <CardHeader>
-          <CardTitle>Prescription</CardTitle>
+
+      <CardTitle className="text-lg border-b border-gray-300">Prescription Details</CardTitle>
+      <Card className="w-full max-w-md border-none shadow-none">
+        <div className="flex">
+          <IconUserFilled className="mr-1"/><span className="font-semibold mr-3">Patient:</span> {patient.first_name} {patient.last_name}
+        </div>
+        <div className="flex">
+          <IconFaceMaskFilled className="mr-1"/><span className="font-semibold mr-3">Condition:</span> {diagnosis.condition}
+        </div>
+        <div className="flex">
+          <IconPillFilled className="mr-1"/><span className="font-semibold mr-3">Medication:</span> {prescription.medication} {prescription.dosage}
+        </div>
+        <div className="flex">
+          <IconCalendarWeekFilled className="mr-1"/><span className="font-semibold mr-3">Dosage Schedule:</span> {new Date(prescription.start_date * 1000).toLocaleDateString()}-{new Date(prescription.end_date * 1000).toLocaleDateString()}
+        </div>
+        <CardFooter className="flex-col gap-2">
           <CardDescription>
             Prescribed by Dr. {doctor.first_name} {doctor.last_name}
           </CardDescription>
-        </CardHeader>
-        <CardContent className="flex items-center gap-2">
-          <IconUserFilled /><span className="font-semibold">Patient:</span> {patient.first_name} {patient.last_name}
-        </CardContent>
-        <CardContent className="flex items-center gap-2">
-          <IconFaceMaskFilled/><span className="font-semibold">Condition:</span> {diagnosis.condition}
-        </CardContent>
-        <CardContent className="flex items-center gap-2">
-          <IconPillFilled/><span className="font-semibold">Medication:</span> {prescription.medication} {prescription.dosage} 
-        </CardContent>
-        <CardContent className="flex items-center gap-2">
-          <IconCalendarWeekFilled/><span className="font-semibold">Start-End Date:</span>{new Date(prescription.start_date * 1000).toLocaleDateString()}-{new Date(prescription.end_date * 1000).toLocaleDateString()}
-        </CardContent>
-        <CardFooter className="flex-col gap-2">
         </CardFooter>
       </Card>
     </>

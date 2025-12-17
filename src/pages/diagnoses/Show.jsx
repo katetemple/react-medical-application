@@ -75,22 +75,20 @@ export default function Show() {
 
   return (
     <>
-          <Card className="w-full max-w-md">
-            <CardHeader>
-              <CardTitle>Diagnosis</CardTitle>
-            </CardHeader>
-            <CardContent className="flex items-center gap-2">
-              <IconUserFilled/><span className="font-semibold">Patient:</span> {patient.first_name} {patient.last_name}
-            </CardContent>
-            <CardContent className="flex items-center gap-2">
-              <IconFaceMaskFilled/><span className="font-semibold">Condition:</span> {diagnoses.condition} 
-            </CardContent>
-            <CardContent className="flex items-center gap-2">
-              <IconCalendarWeekFilled/><span className="font-semibold">Diagnosed on:</span>{new Date(diagnoses.diagnosis_date * 1000).toLocaleDateString()}
-            </CardContent>
-            <CardFooter className="flex-col gap-2">
-            </CardFooter>
-          </Card>
+           <CardTitle className="text-lg border-b border-gray-300">Diagnosis Details</CardTitle>
+            <Card className="w-full max-w-md border-none shadow-none">
+              <div className="flex">
+                <IconUserFilled className="mr-1"/><span className="font-semibold mr-3">Patient:</span> {patient.first_name} {patient.last_name}
+              </div>
+              <div className="flex">
+                <IconFaceMaskFilled className="mr-1"/><span className="font-semibold mr-3">Condition:</span> {diagnoses.condition}
+              </div>
+              <div className="flex">
+                <IconCalendarWeekFilled className="mr-1"/><span className="font-semibold mr-3">Date of Diagnosis:</span> {new Date(diagnoses.diagnosis_date * 1000).toLocaleDateString()}
+              </div>
+              <CardFooter className="flex-col gap-2">
+              </CardFooter>
+            </Card>
         
     </>
   );

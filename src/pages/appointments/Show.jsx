@@ -14,7 +14,10 @@ import {
 import {
   IconCalendarWeekFilled,
   IconUserFilled,
-  IconStethoscope
+  IconStethoscope,
+  IconCalendarFilled,
+  IconMail,
+  IconPhone
 } from "@tabler/icons-react";
 
 export default function Show() {
@@ -95,22 +98,17 @@ export default function Show() {
 
   return (
     <>
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle>Appointment</CardTitle>
-          <CardDescription>
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="flex items-center gap-2">
-          <IconCalendarWeekFilled/>
-          <span className="font-semibold">Date:</span>{new Date(appointment.appointment_date * 1000).toLocaleDateString()}
-        </CardContent>
-        <CardContent className="flex items-center gap-2">
-          <IconUserFilled /><span className="font-semibold">Patient:</span> {patient.first_name} {patient.last_name}
-        </CardContent>
-        <CardContent className="flex items-center gap-2">
-          <IconStethoscope/><span className="font-semibold">Doctor:</span> {doctor.first_name} {doctor.last_name}
-        </CardContent>
+      <CardTitle className="text-lg border-b border-gray-300">Appointment Details</CardTitle>
+      <Card className="w-full max-w-md border-none shadow-none">
+        <div className="flex">
+          <IconCalendarFilled className="mr-1"/><span className="font-semibold mr-3">Date:</span> {new Date(appointment.appointment_date * 1000).toLocaleDateString()}
+        </div>
+        <div className="flex">
+          <IconUserFilled className="mr-1"/><span className="font-semibold mr-3">Patient:</span> {patient.first_name} {patient.last_name}
+        </div>
+        <div className="flex">
+          <IconStethoscope className="mr-1"/><span className="font-semibold mr-3">Doctor:</span> {doctor.first_name} {doctor.last_name}
+        </div>
         <CardFooter className="flex-col gap-2">
         </CardFooter>
       </Card>

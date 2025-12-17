@@ -21,6 +21,14 @@ export const AuthProvider = ({ children }) => {
         }
     });
 
+    const [user, setUser] = useState(null);
+
+    useEffect(() => {
+        if(localStorage.getItem("user")){
+            setUser(JSON.parse(localStorage.getItem("user")));
+        }
+    }, []);
+
     const onRegister = async (first_name, last_name, email, password) => {
         const options = {
             method: "POST",
@@ -61,6 +69,19 @@ export const AuthProvider = ({ children }) => {
             localStorage.setItem("token", response.data.token);
             setToken(response.data.token);
 
+            console.log("setting user", {
+                email: response.data.email,
+                first_name: response.data.first_name,
+                last_name: response.data.last_name
+            })
+            const userData = {
+                email: response.data.email,
+                first_name: response.data.first_name,
+                last_name: response.data.last_name,
+            }
+            setUser(userData);
+            localStorage.setItem("user", JSON.stringify(userData));
+
         } catch (err) {
             console.log(err.response.data);
         }
@@ -68,11 +89,14 @@ export const AuthProvider = ({ children }) => {
 
     const onLogout = () => {
         setToken(null);
+        localStorage.removeItem("user");
+        setUser(null);
         localStorage.removeItem("token");
     };
 
     const value = {
         token,
+        user,
         onLogin,
         onLogout,
         onRegister

@@ -6,7 +6,7 @@ import {
   IconMicrophone2,
   IconInnerShadowTop,
   IconMusic,
-  IconUser,
+  IconUsers,
   IconCalendarWeek,
   IconNotebook,
   IconPillFilled,
@@ -16,6 +16,7 @@ import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
 import { useLocation } from "react-router";
 import { useEffect } from "react";
+import { useAuth } from "@/hooks/useAuth";
 
 import { NavMain } from "@/components/nav-main";
 import { NavUser } from "@/components/nav-user";
@@ -49,7 +50,7 @@ const data = {
     {
       title: "Patients",
       url: "/patients",
-      icon: IconUser,
+      icon: IconUsers,
     },
     {
       title: "Appointments",
@@ -71,7 +72,7 @@ const data = {
 
 export function AppSidebar({ ...props }) {
   const location = useLocation();
-
+  const { user } = useAuth();
   console.log(location);
 
   let message = location.state?.message;
@@ -113,10 +114,7 @@ export function AppSidebar({ ...props }) {
           <NavMain items={data.navMain} />
         </SidebarContent>
         <SidebarFooter>
-          <NavUser 
-            user={data.user} 
-          
-          />
+          {user && <NavUser user={user} />}
         </SidebarFooter>
       </Sidebar>
     </>

@@ -16,7 +16,8 @@ import {
 import { 
     IconCirclePlusFilled,
     IconStethoscope,
-    IconUser
+    IconUsers,
+    IconCalendarWeek
 
  } from "@tabler/icons-react";
 
@@ -25,6 +26,7 @@ export default function Home() {
     const [showLogin, setShowLogin] = useState(false);
     const [doctors, setDoctors] = useState([]);
     const [patients, setPatients] = useState([]);
+    const [appointments, setAppointments] = useState([]);
 
     useEffect(() => {
         const fetchDoctors = async () => {
@@ -64,10 +66,32 @@ export default function Home() {
         fetchPatients();
     }, []);
 
+    useEffect(() => {
+        const fetchAppointments = async () => {
+            const options = {
+                method: "GET",
+                url: "/appointments",
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            };
+
+            try {
+                let response = await axios.request(options);
+                console.log(response.data);
+                setAppointments(response.data);
+            } catch (err) {
+                console.log(err);
+            }
+        };
+
+        fetchAppointments();
+    }, []);
+
     if (token) {
         return (
             <>
-                <CardDescription>Clinic Overview</CardDescription>
+                <CardDescription>Medical Clinic Overview</CardDescription>
                 <div className="flex gap-5">
                     <Card className="w-full max-w-60 gap-4">
                         <CardHeader>
@@ -79,10 +103,18 @@ export default function Home() {
                     </Card>
                     <Card className="w-full max-w-60 gap-4">
                         <CardHeader>
-                            <CardTitle className="text-sm flex items-center"><IconStethoscope className="w-5 mr-2 text-primary rounded-md "/>Patients</CardTitle>
+                            <CardTitle className="text-sm flex items-center"><IconUsers className="w-5 mr-2 text-primary rounded-md "/>Patients</CardTitle>
                         </CardHeader>
                         <CardContent className="text-2xl font-semibold">
                             {patients.length}
+                        </CardContent>
+                    </Card>
+                    <Card className="w-full max-w-60 gap-4">
+                        <CardHeader>
+                            <CardTitle className="text-sm flex items-center"><IconCalendarWeek className="w-5 mr-2 text-chart-1 rounded-md "/>Appointments</CardTitle>
+                        </CardHeader>
+                        <CardContent className="text-2xl font-semibold">
+                            {appointments.length}
                         </CardContent>
                     </Card>
                 </div>

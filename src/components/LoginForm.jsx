@@ -28,7 +28,7 @@ import {
   FieldError,
 } from "@/components/ui/field";
 
-export default function LoginForm() {
+export default function LoginForm({onSwitch}) {
   // const [form, setForm] = useState({});
   const { onLogin } = useAuth();
 
@@ -122,9 +122,12 @@ export default function LoginForm() {
         </form>
       </CardContent>
       <CardFooter className="flex-col gap-2">
-        <Button form="login-form" variant='outline' type="submit" className="w-full cursor-pointer">
+        <Button form="login-form" variant='outline' type="submit" className="w-full cursor-pointer bg-primary text-white">
           Login
         </Button>
+        <CardDescription type="button" onClick={onSwitch}>
+          Don't have an account? <span className="cursor-pointer text-gray-900 font-semibold underline">Register</span>
+        </CardDescription>
       </CardFooter>
     </Card>
   );

@@ -167,7 +167,7 @@ export default function RegisterForm({onSwitch}) {
         </form>
       </CardContent>
       <CardFooter className="flex-col gap-2">
-        <Button form="register-form" variant='outline' type="submit" className="w-full cursor-pointer">
+        <Button form="register-form" variant='outline' type="submit" className="w-full cursor-pointer bg-primary text-white">
           Register
         </Button>
         <CardDescription type="button" onClick={onSwitch}>
